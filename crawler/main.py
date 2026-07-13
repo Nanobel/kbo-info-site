@@ -7,6 +7,12 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 }
 
+def check_robots_allowed(path: str) -> bool:
+    rp = urllib.robotparser.RobotFileParser()
+    rp.set_url(f"{BASE_URL}/robots.txt")
+    rp.read()
+    return rp.can_fetch(HEADERS["User-Agent"], f"{BASE_URL}{path}")
+
 def fetch_page(path: str):
     if not check_robots_allowed(path):
         print(f"[차단됨] robots.txt에 의해 {path} 크롤링 불가")
@@ -16,18 +22,10 @@ def fetch_page(path: str):
     res.raise_for_status()
     res.encoding = "utf-8"
     return res.text
-    
-def check_robots_allowed(path: str) -> bool:
-    rp = urllib.robotparser.RobotFileParser()
-    rp.set_url(f"{BASE_URL}/robots.txt")
-    rp.read()
-    return rp.can_fetch(HEADERS["User-Agent"], f"{BASE_URL}{path}")
-
-
 
 def parse_team_rank(html: str):
     soup = BeautifulSoup(html, "lxml")
-    table = soup.select_one("table.tData")  # 순위표 테이블 클래스
+    table = soup.select_one("table.tData")
     if table is None:
         print("순위표 테이블을 찾을 수 없습니다. 페이지 구조가 바뀌었을 수 있어요.")
         return []
@@ -41,4 +39,13 @@ def parse_team_rank(html: str):
     return results
 
 def main():
-    html =
+    html = fetch_page("/Record/TeamRank/TeamRank.aspx")
+    if html is None:
+        return
+
+    teams = parse_team_rank(html)
+    for team in teams:
+        print(team)
+
+if __name__ == "__main__":
+    main()
