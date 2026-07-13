@@ -30,10 +30,11 @@ def fetch_page(path: str):
 
 def parse_hitter_basic(html: str):
     soup = BeautifulSoup(html, "lxml")
-    table = soup.select_one("table.tData")
-    if table is None:
-        print("타자 기록 테이블을 찾을 수 없습니다.")
-        return []
+    tables = soup.find_all("table")
+    print(f"페이지에서 발견된 테이블 개수: {len(tables)}")
+    for i, t in enumerate(tables):
+        print(f"  테이블 {i}: class={t.get('class')}, id={t.get('id')}")
+    return []
 
     rows = table.select("tbody tr")
     results = []
