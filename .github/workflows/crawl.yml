@@ -1,0 +1,22 @@
+name: KBO Crawler Test
+
+on:
+  workflow_dispatch:   # 수동으로 버튼 눌러서 실행 가능하게
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r crawler/requirements.txt
+
+      - name: Run crawler
+        run: python crawler/main.py 씨
