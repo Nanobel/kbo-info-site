@@ -19,15 +19,23 @@ def fetch_page(path: str):
         return None
     res = requests.get(f"{BASE_URL}{path}", headers=HEADERS, timeout=10)
     res.raise_for_status()
+    res.encoding = "utf-8"   # 인코딩 명시적으로 고정
     return res.text
 
-def main():
-    # 예시: 팀 순위 페이지 (실제 경로는 확인 후 조정 필요)
-    html = fetch_page("/Standings/TeamRank.aspx")
-    if html is None:
-        return
+def parse_team_rank(html: str):
     soup = BeautifulSoup(html, "lxml")
-    print(soup.title.string if soup.title else "제목 없음")
+    table = soup.select_one("table.tData")  # 순위표 테이블 클래스
+    if table is None:
+        print("순위표 테이블을 찾을 수 없습니다. 페이지 구조가 바뀌었을 수 있어요.")
+        return []
 
-if __name__ == "__main__":
-    main()
+    rows = table.select("tbody tr")
+    results = []
+    for row in rows:
+        cols = [td.get_text(strip=True) for td in row.select("td")]
+        if cols:
+            results.append(cols)
+    return results
+
+def main():
+    html =
