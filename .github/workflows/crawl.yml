@@ -24,6 +24,9 @@ jobs:
       - name: Run crawler
         run: python crawler/main.py
 
+      - name: Run player crawler
+        run: python crawler/players.py
+
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
