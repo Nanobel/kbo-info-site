@@ -4,23 +4,26 @@ import urllib.robotparser
 
 BASE_URL = "https://www.koreabaseball.com"
 HEADERS = {
-    "User-Agent": "kbo-info-site-bot/0.1 (personal non-commercial project)"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
 }
-
-def check_robots_allowed(path: str) -> bool:
-    rp = urllib.robotparser.RobotFileParser()
-    rp.set_url(f"{BASE_URL}/robots.txt")
-    rp.read()
-    return rp.can_fetch(HEADERS["User-Agent"], f"{BASE_URL}{path}")
 
 def fetch_page(path: str):
     if not check_robots_allowed(path):
         print(f"[차단됨] robots.txt에 의해 {path} 크롤링 불가")
         return None
     res = requests.get(f"{BASE_URL}{path}", headers=HEADERS, timeout=10)
+    print(f"[상태 코드] {res.status_code}")
     res.raise_for_status()
-    res.encoding = "utf-8"   # 인코딩 명시적으로 고정
+    res.encoding = "utf-8"
     return res.text
+    
+def check_robots_allowed(path: str) -> bool:
+    rp = urllib.robotparser.RobotFileParser()
+    rp.set_url(f"{BASE_URL}/robots.txt")
+    rp.read()
+    return rp.can_fetch(HEADERS["User-Agent"], f"{BASE_URL}{path}")
+
+
 
 def parse_team_rank(html: str):
     soup = BeautifulSoup(html, "lxml")
