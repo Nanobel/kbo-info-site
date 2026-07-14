@@ -65,5 +65,24 @@ def crawl_hitters():
     data = [dict(zip(HITTER_COLUMNS, row)) for row in rows]
     save_json(data, "data/players/hitters_basic.json")
 
+def debug_detail_page():
+    html = fetch_page("/Record/Player/HitterBasic/Detail1.aspx")
+    if html is None:
+        return
+    soup = BeautifulSoup(html, "lxml")
+    table = soup.select_one("table.tData01")
+    if table is None:
+        print("세부기록 테이블을 찾을 수 없습니다.")
+        return
+
+    header_row = table.select_one("thead tr")
+    headers = [th.get_text(strip=True) for th in header_row.select("th")]
+    print(f"컬럼 목록: {headers}")
+
+    first_row = table.select_one("tbody tr")
+    if first_row:
+        first_data = [td.get_text(strip=True) for td in first_row.select("td")]
+        print(f"첫 번째 선수 데이터: {first_data}")
+        
 if __name__ == "__main__":
     crawl_hitters()
