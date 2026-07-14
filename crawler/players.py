@@ -78,6 +78,16 @@ def crawl_hitters():
     data = parse_hitter_basic(html)
     save_json(data, "data/players/hitters_basic.json")
 
+def debug_hitter_detail_page(player_id: str):
+    html = fetch_page(f"/Record/Player/HitterDetail/Basic.aspx?playerId={player_id}")
+    if html is None:
+        return
+    soup = BeautifulSoup(html, "lxml")
+    tables = soup.find_all("table")
+    print(f"페이지에서 발견된 테이블 개수: {len(tables)}")
+    for i, t in enumerate(tables):
+        headers = [th.get_text(strip=True) for th in t.select("thead th")]
+        print(f"  테이블 {i}: class={t.get('class')}, headers={headers}")
 
 if __name__ == "__main__":
-    crawl_hitters()
+    debug_hitter_detail_page("66606")
