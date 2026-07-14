@@ -85,4 +85,4 @@ def debug_detail_page():
         print(f"첫 번째 선수 데이터: {first_data}")
         
 if __name__ == "__main__":
-    crawl_hitters()
+    debug_detail_page()
