@@ -90,4 +90,5 @@ def debug_hitter_detail_page(player_id: str):
         print(f"  테이블 {i}: class={t.get('class')}, headers={headers}")
 
 if __name__ == "__main__":
-    debug_hitter_detail_page("66606")
+    result = crawl_hitter_detail("66606")
+    print(result)
